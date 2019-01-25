@@ -1910,7 +1910,7 @@ namespace
     template <typename SUBNET> 
     using pres  = prelu<add_prev1<bn_con<con<8,3,3,1,1,prelu<bn_con<con<8,3,3,1,1,tag1<SUBNET>>>>>>>>;
 
-    void test_visit_funcions()
+    void test_visit_functions()
     {
         using net_type2 = loss_multiclass_log<fc<10,
             avg_pool_everything<
@@ -3243,7 +3243,7 @@ namespace
             test_batch_normalize_conv();
             test_basic_tensor_ops();
             test_layers();
-            test_visit_funcions();
+            test_visit_functions();
             test_copy_tensor_cpu();
             test_copy_tensor_add_to_cpu();
             test_concat();
@@ -3271,6 +3271,24 @@ namespace
             dlog << LINFO << "NOW RUNNING TESTS WITH set_dnn_prefer_smallest_algorithms()";
             set_dnn_prefer_smallest_algorithms();
             run_tests();
+
+
+            {
+                resizable_tensor a(2,3,4,5);
+                resizable_tensor b(2,3,4,5);
+                DLIB_TEST(have_same_dimensions(a,b));
+
+                a.set_size(2,3,4,4);
+                DLIB_TEST(!have_same_dimensions(a,b));
+                a.set_size(2,3,3,5);
+                DLIB_TEST(!have_same_dimensions(a,b));
+                a.set_size(2,2,4,5);
+                DLIB_TEST(!have_same_dimensions(a,b));
+                a.set_size(1,3,4,5);
+                DLIB_TEST(!have_same_dimensions(a,b));
+
+                static_assert(!is_image_type<resizable_tensor>::value, "should be false");
+            }
         }
     } a;
 }
